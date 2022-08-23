@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from .models import User, Recipes, Tags, Ingredients
+from .models import Recipes, Tags, Ingredients
 
-class UserSerializer(serializers.ModelField):
-    pass
+class TagsSerializer(serializers.ModelSerializer):
 
-class TagsSerializer(serializers.ModelField):
-    pass
+    class Meta():
+        model = Tags
+        fields = ('title', 'color', 'slug')
+    
 
-class IngredientsSerializer(serializers.ModelField):
+class IngredientsSerializer(serializers.ModelSerializer):
     pass

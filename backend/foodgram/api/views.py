@@ -5,27 +5,15 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from users.models import User
+from api.models import Tags 
 from .permissions import AdminOnlyPermission
-from .serializers import *
-
-
-class UsersViewSet(viewsets.ModelViewSet):
-    lookup_field = 'username'
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = (AdminOnlyPermission)
-    pagination_class = PageNumberPagination
-    filter_backends = [filters.SearchFilter]
-    search_fields = [
-        "username",
-    ]
-
-    pass
+from .serializers import TagsSerializer
 
 
 class TagsViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = Tags.objects.all()
+    serializer_class = (TagsSerializer)
+
 
 
 class RecipesViewSet(viewsets.ModelViewSet):

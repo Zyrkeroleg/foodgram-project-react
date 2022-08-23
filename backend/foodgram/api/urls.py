@@ -2,12 +2,9 @@ from posixpath import basename
 from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 from rest_framework.authtoken import views
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from user.views import UsersViewSet
+
 from api.views import (
-    UsersViewSet,
     TagsViewSet,
     RecipesViewSet,
     ShoppingCartViewSet,
@@ -20,7 +17,6 @@ from api.views import (
 
 
 router = SimpleRouter()
-router.register(r'users', UsersViewSet, basename='users')
 router.register(r'tags', TagsViewSet, basename='tags')
 router.register(r'recipes', RecipesViewSet, basename='recipes')
 router.register(r'recipes/(?P<recipe_id>[^/.]+)/shopping_cart', ShoppingCartViewSet, basename='shopping_cart')
@@ -31,9 +27,9 @@ router.register(r'users/(?P<users_id>[^/.]+)/subscribe/', SubscribeViewSet, base
 
 urlpatterns = [
     # path('recipes/download_shopping_cart/', ShoppingCartViewSet),
-    path('users/subscriptions/', subscriptions, name='subscriptions'),
-    path('auth/', views.obtain_auth_token),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),
+    path('users/', include('djoser.urls')),
+    path('users/', include('djoser.urls.authtoken')),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
 ]
