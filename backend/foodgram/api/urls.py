@@ -28,8 +28,5 @@ router.register(r'users/(?P<users_id>[^/.]+)/subscribe/', SubscribeViewSet, base
 urlpatterns = [
     # path('recipes/download_shopping_cart/', ShoppingCartViewSet),
     path('', include(router.urls)),
-    path('users/', include('djoser.urls')),
-    path('users/', include('djoser.urls.authtoken')),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
+    
 ]

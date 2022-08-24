@@ -170,17 +170,15 @@ CONTACT_EMAIL = "zyrker1@gmail.com"
 }"""
 
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': True,
-    'SERIALIZERS': {
-        'user': 'user.serializers.UserSerializer',
-        'user_create': 'user.serializers.UserSerializer',
-        },
+    'SEND_ACTIVATION_EMAIL': False,
     "HIDE_USERS": False,
     'LOGIN_FIELD': 'email',
     'PERMISSIONS':{
         'user_list': ['rest_framework.permissions.AllowAny'],
+        },
+    "SERIALIZERS": {
+        "user_list": 'user.serializers.UserSerializer',
+        "user": 'user.serializers.UserSerializer',
+        'current_user': 'user.serializers.UserSerializer',
         },
 }

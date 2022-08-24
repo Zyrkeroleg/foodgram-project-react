@@ -1,3 +1,4 @@
+from hashlib import blake2s
 from tabnanny import verbose
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -30,15 +31,26 @@ UNITS = [
     ('щепотка', '10'),
 ]
 
+class Tags(models.Model):
+    title = models.CharField('Тег', max_length=20, blank=False)
+    color = ColorField(choices=COLOR_PALETTE, blank=False)
+    slug = models.SlugField(unique=True, max_length=20, blank=False)
+
+
+class Ingredients(models.Model):
+    name = models.CharField('Ингредиент', max_length=200, blank=False)
+    amount = models.IntegerField('Колличество', blank=False)
+    measurement_unit = models.CharField('Еденица измерения',max_length=200, choices=UNITS, blank=False)
+
 
 class Recipes(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
-    title = models.CharField('Название рецепта', max_length=200)
-    image = models.ImageField(upload_to='.../', blank=True, null=True)
-    description = models.TextField()
-    # ingredients = models.ManyToManyField() # ???
-    # tags = models.CharField(max_length=30, choices=...) # ??
-    cooking_time = models.IntegerField()
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
+    title = models.CharField('Название рецепта', max_length=200, blank=False)
+    image = models.ImageField(upload_to='.../', blank=False, null=True)
+    description = models.TextField('Описание', blank=False)
+    ingredients = models.ManyToManyField(Ingredients, blank=False)
+    tags = models.ManyToManyField(Tags, blank=False)
+    cooking_time = models.IntegerField('Время приготовления. мин', blank=False)
     
     class Meta:
         verbose_name_plural = 'Рецепты'
@@ -47,13 +59,5 @@ class Recipes(models.Model):
         return self.title
 
 
-class Tags(models.Model):
-    title = models.CharField('Тег', max_length=20)
-    color = ColorField(choices=COLOR_PALETTE)
-    slug = models.SlugField(unique=True, max_length=20)
 
 
-class Ingredients(models.Model):
-    name = models.CharField('Ингредиент', max_length=200)
-    amount = models.IntegerField(blank=False)
-    measurement_unit = models.CharField('Еденица измерения',max_length=200, choices=UNITS)

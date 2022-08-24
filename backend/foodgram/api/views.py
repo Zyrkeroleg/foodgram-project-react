@@ -5,9 +5,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from api.models import Tags 
+from api.models import Ingredients, Recipes, Tags 
 from .permissions import AdminOnlyPermission
-from .serializers import TagsSerializer
+from .serializers import TagsSerializer, RecipesSerializer, IngredientsSerializer
 
 
 class TagsViewSet(viewsets.ModelViewSet):
@@ -17,7 +17,8 @@ class TagsViewSet(viewsets.ModelViewSet):
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = Recipes.objects.all()
+    serializer_class = (RecipesSerializer)
 
 
 class ShoppingCartViewSet(viewsets.ModelViewSet):
@@ -33,7 +34,8 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
 
 class IngredientsViewSet(viewsets.ModelViewSet):
-    pass
+    queryset = Ingredients.objects.all()
+    serializer_class = (IngredientsSerializer)
 
 
 def subscriptions():
