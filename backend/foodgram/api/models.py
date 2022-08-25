@@ -1,5 +1,3 @@
-from hashlib import blake2s
-from tabnanny import verbose
 from django.contrib.auth import get_user_model
 from django.db import models
 from colorfield.fields import ColorField
@@ -36,11 +34,23 @@ class Tags(models.Model):
     color = ColorField(choices=COLOR_PALETTE, blank=False)
     slug = models.SlugField(unique=True, max_length=20, blank=False)
 
+    class Meta:
+        verbose_name_plural = 'Тэги'
+    
+    def __str__(self):
+        return self.title
+
 
 class Ingredients(models.Model):
     name = models.CharField('Ингредиент', max_length=200, blank=False)
     amount = models.IntegerField('Колличество', blank=False)
     measurement_unit = models.CharField('Еденица измерения',max_length=200, choices=UNITS, blank=False)
+
+    class Meta:
+        verbose_name_plural = 'Ингредиенты'
+    
+    def __str__(self):
+        return self.name
 
 
 class Recipes(models.Model):
@@ -58,6 +68,15 @@ class Recipes(models.Model):
     def __str__(self):
         return self.title
 
+class Favorite(models.Model):
+    recipe = models.ForeignKey(
+        Recipes,
+        on_delete=models.CASCADE,
+        related_name='favorite',
+        verbose_name='Избранное'
+    )
 
+    class Meta:
+        verbose_name_plural = 'Избранное'
 
 

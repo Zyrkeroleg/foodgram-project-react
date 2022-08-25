@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import UniqueConstraint
 
 
 class User(AbstractUser):
@@ -21,6 +22,12 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
     USERNAME_FIELD = 'email'
 
+    class Meta:
+        verbose_name_plural = 'Пользователи'
+    
+    def __str__(self):
+        return self.username
+
     @property
     def is_admin(self):
         return self.is_superuser or self.role == self.ADMIN
@@ -34,3 +41,20 @@ class User(AbstractUser):
         return self.role == self.USER
 
 
+class Follow(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='follower',
+        verbose_name='Подписчик'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='following',
+        verbose_name='Подписка'
+    )
+    UniqueConstraint(fields=['user', 'author'], name='unic')
+
+    class Meta:
+        verbose_name_plural = 'Подписки'

@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from api.models import Ingredients, Recipes, Tags 
-from .permissions import AdminOnlyPermission
+from .permissions import IsAuthorPermission
 from .serializers import TagsSerializer, RecipesSerializer, IngredientsSerializer
 
 
@@ -19,6 +19,13 @@ class TagsViewSet(viewsets.ModelViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = (RecipesSerializer)
+    permission_classes = (
+        IsAuthenticated,
+        IsAuthorPermission,
+    )
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class ShoppingCartViewSet(viewsets.ModelViewSet):
