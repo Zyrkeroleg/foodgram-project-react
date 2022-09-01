@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt',
+    # 'rest_framework_simplejwt',
     'colorfield',
     'user',
     'api',
@@ -140,7 +140,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 6,
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
@@ -153,32 +153,18 @@ EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 CONTACT_EMAIL = "zyrker1@gmail.com"
 
-"""DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}', 
-    'SEND_ACTIVATION_EMAIL': True,
-    "HIDE_USERS": False,
-    'LOGIN_FIELD': 'email',
-    'PERMISSIONS':{
-        'user_list': ['rest_framework.permissions.AllowAny'],
-        'token_create': ['rest_framework.permissions.AllowAny'],
-        'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
-        
-    },
-    
-}"""
-
 DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     "HIDE_USERS": False,
     'LOGIN_FIELD': 'email',
     'PERMISSIONS':{
         'user_list': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.AllowAny'],
         },
     "SERIALIZERS": {
         "user_list": 'user.serializers.UserSerializer',
         "user": 'user.serializers.UserSerializer',
         'current_user': 'user.serializers.UserSerializer',
+        'user_create': 'user.serializers.UserSerializer',
         },
 }

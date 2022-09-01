@@ -17,19 +17,20 @@ COLOR_PALETTE = [
     ]
 
 UNITS = [
-    ('ч. л.', '1'),
-    ('ст. л.', '2'),
-    ('г', '3'),
-    ('стакан', '4'),
-    ('по вкусу', '5'),
-    ('шт', '6'),
-    ('капля', '7'),
-    ('кг', '8'),
-    ('мл', '9'),
-    ('щепотка', '10'),
+    ('ч. л.', 'ч. л'),
+    ('ст. л.', 'ст. л.'),
+    ('г', 'г'),
+    ('стакан', 'стакан'),
+    ('по вкусу', 'по вкусу'),
+    ('шт', 'шт'),
+    ('капля', 'капля'),
+    ('кг', 'кг'),
+    ('мл', 'мл'),
+    ('щепотка', 'щепотка'),
 ]
 
 class Tags(models.Model):
+    """Тэги"""
     title = models.CharField('Тег', max_length=20, blank=False)
     color = ColorField(choices=COLOR_PALETTE, blank=False)
     slug = models.SlugField(unique=True, max_length=20, blank=False)
@@ -42,6 +43,7 @@ class Tags(models.Model):
 
 
 class Ingredients(models.Model):
+    """Ингредиенты."""
     name = models.CharField('Ингредиент', max_length=200, blank=False)
     amount = models.IntegerField('Колличество', blank=False)
     measurement_unit = models.CharField('Еденица измерения',max_length=200, choices=UNITS, blank=False)
@@ -54,7 +56,8 @@ class Ingredients(models.Model):
 
 
 class Recipes(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
+    """Рецепты."""
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes', blank=False)
     title = models.CharField('Название рецепта', max_length=200, blank=False)
     image = models.ImageField(upload_to='.../', blank=False, null=True)
     description = models.TextField('Описание', blank=False)
@@ -69,6 +72,7 @@ class Recipes(models.Model):
         return self.title
 
 class Favorite(models.Model):
+    """Избранное."""
     recipe = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
