@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from django.contrib.auth import get_user_model
 from django.db import models
 from colorfield.fields import ColorField
@@ -93,11 +92,11 @@ class Favorite(models.Model):
         )]
         verbose_name_plural = 'Избранное'
 
-class Shoping_cart(models.Bodel):
-    user = models.ForeignKey(User, on_delete=CASCADE, related_name='shopping_cart')
-    recipes = models.ForeignKey(Recipes, on_delete=CASCADE, related_name='shopping_cart')
+class Shoping_cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shopping_cart')
+    recipes = models.ForeignKey(Recipes, on_delete=models.CASCADE, related_name='shopping_cart')
 
     class Meta:
-        contrains = [models.UniqueConstraint(fields=['recipes', 'user'],
+        constraints = [models.UniqueConstraint(fields=['recipes', 'user'],
                                              name='unique_chopping_cart_recipes'
         )]
