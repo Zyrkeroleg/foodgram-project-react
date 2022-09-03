@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from django.contrib.auth import get_user_model
 from django.db import models
 from colorfield.fields import ColorField
@@ -30,10 +31,10 @@ UNITS = [
 ]
 
 class Tags(models.Model):
-    """Тэги"""
-    title = models.CharField('Тег', max_length=20, blank=False)
-    color = ColorField(choices=COLOR_PALETTE, blank=False)
-    slug = models.SlugField(unique=True, max_length=20, blank=False)
+    """Тэги."""
+    title = models.CharField('Тег', max_length=150, blank=False)
+    color = ColorField(samples=COLOR_PALETTE, blank=False)
+    slug = models.SlugField(unique=True, max_length=150, blank=False)
 
     class Meta:
         verbose_name_plural = 'Тэги'
@@ -45,7 +46,6 @@ class Tags(models.Model):
 class Ingredients(models.Model):
     """Ингредиенты."""
     name = models.CharField('Ингредиент', max_length=200, blank=False)
-    amount = models.IntegerField('Колличество', blank=False)
     measurement_unit = models.CharField('Еденица измерения',max_length=200, choices=UNITS, blank=False)
 
     class Meta:
@@ -58,29 +58,46 @@ class Ingredients(models.Model):
 class Recipes(models.Model):
     """Рецепты."""
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes', blank=False)
-    title = models.CharField('Название рецепта', max_length=200, blank=False)
-    image = models.ImageField(upload_to='.../', blank=False, null=True)
-    description = models.TextField('Описание', blank=False)
+    name = models.CharField('Название рецепта', max_length=200, blank=False)
+    image = models.ImageField(upload_to='recipes/', blank=False, null=True)
+    text = models.TextField('Описание', blank=False)
     ingredients = models.ManyToManyField(Ingredients, blank=False)
-    tags = models.ManyToManyField(Tags, blank=False)
+    tags = models.ManyToManyField(Tags, related_name='recipes', blank=False)
     cooking_time = models.IntegerField('Время приготовления. мин', blank=False)
     
     class Meta:
         verbose_name_plural = 'Рецепты'
     
     def __str__(self):
-        return self.title
+        return self.name
+
 
 class Favorite(models.Model):
     """Избранное."""
-    recipe = models.ForeignKey(
+    recipes = models.ForeignKey(
         Recipes,
         on_delete=models.CASCADE,
         related_name='favorite',
         verbose_name='Избранное'
     )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorite'
+    )
 
     class Meta:
+        constraints=[models.UniqueConstraint(
+            fields=['recipes', 'user'],
+            name='favorite_recipes'
+        )]
         verbose_name_plural = 'Избранное'
 
+class Shoping_cart(models.Bodel):
+    user = models.ForeignKey(User, on_delete=CASCADE, related_name='shopping_cart')
+    recipes = models.ForeignKey(Recipes, on_delete=CASCADE, related_name='shopping_cart')
 
+    class Meta:
+        contrains = [models.UniqueConstraint(fields=['recipes', 'user'],
+                                             name='unique_chopping_cart_recipes'
+        )]

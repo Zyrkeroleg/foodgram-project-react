@@ -1,11 +1,12 @@
 from rest_framework import permissions
 
 
+class AuthorOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return (request.method in permissions.SAFE_METHODS
+                or request.user.is_authenticated)
 
-class IsAuthorPermission(permissions.BasePermission):
-    """ Права доступа только для автора """
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return obj.author == request.user
+    def has_object_permission(self, request, view, object):
+        return (request.method in permissions.SAFE_METHODS
+                or request.user.is_authenticated and request.user.is_staff
+                or request.user == object.author)

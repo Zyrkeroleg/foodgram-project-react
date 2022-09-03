@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from api.models import Recipes
 from .models import Follow, User
-from api.serializers import RecipesSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class RecipesSubscribeSerializer(serializers.ModelSerializer):
+class RecipesSimpleSerializer(serializers.ModelSerializer):
     """Отоброжение резептов у подписок."""
 
     class Meta:
@@ -69,7 +68,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         limit = self.context.get('request').GET.get('recipes_limit')
         if limit:
             recipes = recipes[:limit]
-        serializer = RecipesSubscribeSerializer(recipes, many=True)
+        serializer = RecipesSimpleSerializer(recipes, many=True)
         return serializer.data
 
 

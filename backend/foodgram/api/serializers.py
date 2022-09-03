@@ -1,11 +1,16 @@
 from rest_framework import serializers
+
+from user.serializers import RecipesSimpleSerializer
 from .models import Favorite, Recipes, Tags, Ingredients
+
+
 
 class TagsSerializer(serializers.ModelSerializer):
 
     class Meta():
         model = Tags
         fields = (
+            'id',
             'title',
             'color', 
             'slug'
@@ -17,8 +22,8 @@ class IngredientsSerializer(serializers.ModelSerializer):
     class Meta():
         model = Ingredients
         fields = (
+            'id',
             'name',
-            'amount',
             'measurement_unit'
         )
 
@@ -28,27 +33,23 @@ class RecipesSerializer(serializers.ModelSerializer):
     class Meta():
         model = Recipes
         fields = (
-            'author',
-            'title',
+            'id',
+            'name',
             'image',
-            'description',
+            'text',
             'ingredients',
             'cooking_time',
             'tags'
         )
 
-class FavoriteSerializer(serializers.ModelField):
-    favoriting = serializers.SlugRelatedField(
-        slug_field='title',
-        queryset=Recipes.objects.all()
-    )
-
-    def validate_favoriting(self, recipe):
-        if recipe in self.favorite:
-            raise serializers.ValidationError('рецепт уже в избранном')
-        return recipe
-
-
+class FavoriteSerializer(serializers.ModelSerializer):
+    recipes = serializers.SerializerMethodField()
+    
+    
     class Meta():
-        model = Favorite
-        fields = '__all__'
+        model = Recipes
+        fields = ('id', 'recipes')
+
+    def get_recipes(self, object):
+        recipes = object.recipes.all()
+        return RecipesSimpleSerializer(recipes, many=True).data
