@@ -4,10 +4,7 @@ from user.views import CostomUserViewSet
 from api.views import (
     TagsViewSet,
     RecipesViewSet,
-    ShoppingCartViewSet,
-    FavoriteViewSet,
     IngredientsViewSet,
-
 )
 
 app_name = 'api'

@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 from colorfield.fields import ColorField
 from user.models import User
@@ -31,7 +31,7 @@ UNITS = [
 
 class Tags(models.Model):
     """Тэги."""
-    title = models.CharField('Тег', max_length=150, blank=False)
+    name = models.CharField('Тег', max_length=150, blank=False)
     color = ColorField(samples=COLOR_PALETTE, blank=False)
     slug = models.SlugField(unique=True, max_length=150, blank=False)
 
@@ -39,7 +39,7 @@ class Tags(models.Model):
         verbose_name_plural = 'Тэги'
     
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Ingredients(models.Model):
@@ -92,11 +92,32 @@ class Favorite(models.Model):
         )]
         verbose_name_plural = 'Избранное'
 
+
 class Shoping_cart(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shopping_cart')
-    recipes = models.ForeignKey(Recipes, on_delete=models.CASCADE, related_name='shopping_cart')
+    """Корзина."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Shoping_cart')
+    recipes = models.ForeignKey(Recipes, on_delete=models.CASCADE, related_name='Shoping_cart')
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['recipes', 'user'],
                                              name='unique_chopping_cart_recipes'
         )]
+        verbose_name_plural = 'Карзина покупок'
+
+
+class Amount_of_ingredients(models.Model):
+    """Общее колличество ингредиентов."""
+    recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Ingredients, on_delete=models.PROTECT)
+    amount = models.PositiveIntegerField(
+        validators=[MinValueValidator(1, 'Меньше 1 быть не может')]
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient'
+            )
+        ]
+        verbose_name_plural = 'Общее колличество ингредиентов'

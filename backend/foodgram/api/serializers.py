@@ -1,8 +1,19 @@
 from rest_framework import serializers
 
-from user.serializers import RecipesSimpleSerializer
-from .models import Favorite, Recipes, Tags, Ingredients
+from .models import Favorite, Recipes, Tags, Ingredients, Shoping_cart, Amount_of_ingredients
 
+
+class AmountOfIgredientsSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='ingredient.id')
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit')
+
+    class Meta:
+        model = Amount_of_ingredients
+        fields = (
+            'id', 'name', 'measurement_unit', 'amount'
+        )
 
 
 class TagsSerializer(serializers.ModelSerializer):
@@ -41,15 +52,17 @@ class RecipesSerializer(serializers.ModelSerializer):
             'cooking_time',
             'tags'
         )
-
-class FavoriteSerializer(serializers.ModelSerializer):
-    recipes = serializers.SerializerMethodField()
     
-    
-    class Meta():
-        model = Recipes
-        fields = ('id', 'recipes')
+    def get_is_in_shopping_cart(self, obj):
+        """Статус - рецепт в избранном или нет."""
+        user_id = self.context.get('request').user.id
+        return Shoping_cart.objects.filter(
+            user=user_id, recipe=obj.id).exists()
 
-    def get_recipes(self, object):
-        recipes = object.recipes.all()
-        return RecipesSimpleSerializer(recipes, many=True).data
+    def get_is_favorited(self, obj):
+        """Статус - рецепт в избранном или нет."""
+        user_id = self.context.get('request').user.id
+        return Favorite.objects.filter(
+            user=user_id, recipe=obj.id).exists()
+
+    
