@@ -22,7 +22,7 @@ class TagsSerializer(serializers.ModelSerializer):
         model = Tags
         fields = (
             'id',
-            'title',
+            'name',
             'color', 
             'slug'
         )
@@ -50,7 +50,7 @@ class RecipesSerializer(serializers.ModelSerializer):
             'text',
             'ingredients',
             'cooking_time',
-            'tags'
+            'tags',
         )
     
     def get_is_in_shopping_cart(self, obj):

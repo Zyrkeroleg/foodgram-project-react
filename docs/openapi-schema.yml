@@ -374,7 +374,7 @@ paths:
           $ref: '#/components/responses/AuthenticationError'
       tags:
         - Избранное
-  /api/recipes/{id}/shopping_cart/:
+  /api/recipes/{id}/Shoping_cart/:
     post:
       operationId: Добавить рецепт в список покупок
       description: 'Доступно только авторизованным пользователям'

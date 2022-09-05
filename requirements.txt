@@ -7,12 +7,14 @@ coreschema==0.0.4
 cryptography==37.0.4
 defusedxml==0.7.1
 Django==4.1
+django-adaptors==0.2.5
 django-colorfield==0.7.2
 django-filter==22.1
 django-templated-mail==1.1.1
 djangorestframework==3.13.1
 djangorestframework-simplejwt==5.2.0
 djoser==2.1.0
+fpdf==1.7.2
 idna==3.3
 itypes==1.2.0
 Jinja2==3.1.2
@@ -20,7 +22,8 @@ Markdown==3.4.1
 MarkupSafe==2.1.1
 oauthlib==3.2.0
 Pillow==9.2.0
-psycopg2-binary==2.9.3
+psycopg2==2.9.3
+psycopg2-binary==2.8.6
 pycparser==2.21
 PyJWT==2.4.0
 python-dotenv==0.20.0
