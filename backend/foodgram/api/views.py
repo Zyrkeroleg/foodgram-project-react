@@ -1,3 +1,4 @@
+from functools import partial
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -5,47 +6,46 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from fpdf import FPDF
 from user.serializers import RecipesSimpleSerializer
 from api.models import Favorite, Ingredients, Recipes, Shoping_cart, Tags 
 from .serializers import TagsSerializer, RecipesSerializer, IngredientsSerializer
 from .permissions import AuthorOrReadOnly
-
+from .filters import RecipeFilter
 
 class TagsViewSet(viewsets.ModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = (TagsSerializer)
 
 
-class IngregientsViewSet(viewsets.ModelViewSet):
-    queryset = Ingredients.objects.all()
-    serializer_class = IngredientsSerializer
-
-
-
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = (RecipesSerializer)
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = RecipeFilter
+    
 
     @action(detail=True,
             url_path='recipes',
-            methods={'post', 'get', 'delete'},
+            methods={'post', 'get', 'delete', 'patch'},
             permission_classes=[AuthorOrReadOnly, IsAuthenticatedOrReadOnly]
             )
-    def get_and_create_recipes(self, request):
-        author = request.user
+    def get_delete_create_recipes(self, request):
         recipes = Recipes.objects.all()
         if request.method == "GET":
             serializer = RecipesSerializer(recipes)
             return Response(serializer.data, status=status.HTTP_200_OK)
         if request.method == 'POST':
             serializer.save(author=self.request.user)
-
-    def delete_recipes(self, request):
         if request.method == 'DELETE':
             recipe = get_object_or_404(Recipes, id=id)
             recipe.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.method == 'PATCH':
+            serializer = RecipesSerializer(recipes, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True,
             methods=['post', 'delete'],
