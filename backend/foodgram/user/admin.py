@@ -1,22 +1,19 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from user.models import User, Follow
+
+from user.models import Follow, User
 
 
-class UserAdmin(UserAdmin):
-    """Кастомная админка модели User."""
-    search_fields = ('email', 'username')
-    list_filter = ('email', 'username')
-    ordering = ('pk',)
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'username', 'email', 'first_name', 'last_name')
+    search_fields = ('username', 'email')
+    list_filter = ('username', 'email')
+    empty_value_display = '-пусто-'
 
 
+@admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
-    list_display = (
-        'id',
-        'user',
-        'author'
-    )
-    search_fields = ('user__username', 'author__username')
-
-admin.site.register(User)
-admin.site.register(Follow)
+    list_display = ('id', 'user', 'author')
+    search_fields = ('user', 'author')
+    list_filter = ('user', 'author')
+    empty_value_display = '-пусто-'

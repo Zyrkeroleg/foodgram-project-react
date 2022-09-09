@@ -1,10 +1,17 @@
 import csv
-from api.models import Ingredients
+from django.core.management.base import BaseCommand
+from api.models import Ingredient
 
-with open('/home/zyrker/Dev/foodgram-project-react/backend/foodgram/ingredients.csv', newline='') as File:  
-    reader = csv.reader(File)
-    for row in reader:
-        name, unit = row
-        Ingredients.objects.get_or_create(
-            name=name,
-            measurement_unit=unit)
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        with open(
+            './ingredients.csv',
+                newline='') as File:
+            reader = csv.reader(File)
+            for row in reader:
+                name, unit = row
+                Ingredient.objects.get_or_create(
+                    name=name,
+                    measurement_unit=unit)
+            self.stdout.write('Successful')

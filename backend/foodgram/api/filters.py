@@ -1,28 +1,32 @@
-from django_filters import ModelMultipleChoiceFilter
 from django_filters.rest_framework import FilterSet, filters
-from user.models import User
-from .models import Recipes, Tags
+from rest_framework.filters import SearchFilter
+
+from .models import Recipes
+
+
+class IngredientSearchFilter(SearchFilter):
+    """Фильтр поиска игредиентов."""
+    search_param = 'name'
+
 
 class RecipeFilter(FilterSet):
-    tags = ModelMultipleChoiceFilter(
-        field_name='tags__slug',
-        to_field_name='slug',
-        queryset=Tags.objects.all()
+    """Фильтр рецептов."""
+    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
+    is_favorited = filters.BooleanFilter(method='filter_is_favorited')
+    is_in_shopping_cart = filters.BooleanFilter(
+        method='filter_is_in_shopping_cart'
     )
-    author = filters.ModelChoiceFilter(queryset=User.objects.all())
-    is_in_favorite = filters.BooleanFilter(method='filter_favorite')
-    is_in_shoping_cart = filters.BooleanFilter(method='filter_shoping_cart')
-
-    def filter_favorite(self, queryset, name, value):
-        if value:
-            return queryset.filter(favorite__user=self.request.user)
-        return queryset
-
-    def filter_shoping_cart(self, queryset, name, value):
-        if value:
-            return queryset.filter(shoping_cart__user=self.request.user)
-        return queryset
 
     class Meta:
         model = Recipes
-        fields = ('tags', 'author')
+        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
+
+    def filter_is_favorited(self, queryset, name, value):
+        if value:
+            return queryset.filter(favorites__user=self.request.user)
+        return queryset
+
+    def filter_is_in_shopping_cart(self, queryset, name, value):
+        if value:
+            return queryset.filter(carts__user=self.request.user)
+        return queryset

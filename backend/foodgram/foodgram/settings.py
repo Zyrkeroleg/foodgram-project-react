@@ -1,8 +1,7 @@
-from dotenv import load_dotenv
 import os
-from datetime import timedelta 
-
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,13 +37,16 @@ INSTALLED_APPS = [
     'django_filters',
     'djoser',
     'dotenv',
-    'script'
+    'script',
+    'corsheaders',
 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -53,6 +55,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'foodgram.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3001',
+]
 
 TEMPLATES = [
     {
@@ -72,38 +80,31 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'fooddb',
-#         'USER': 'fooduser',
-#         'PASSWORD': '123456',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432'
-#     }
-# }
-
-
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": os.getenv(
+#             "DB_ENGINE", default="django.db.backends.postgresql"
+#         ),
+#         "NAME": os.getenv("DB_NAME", default="postgres"),
+#         "USER": os.getenv("POSTGRES_USER", default="postgres"),
+#         "PASSWORD": os.getenv("POSTGRES_PASSWORD", default="postgres"),
+#         "HOST": os.getenv("DB_HOST", default="db"),
+#         "PORT": os.getenv("DB_PORT", default="5432"),
+#     }
+# }
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = "user.User" 
+AUTH_USER_MODEL = "user.User"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -150,15 +151,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
+    'EXCEPTION_HANDLER': 'api.utils.custom_exception_handler',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
-
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 6,
-
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
     ]
 }
 
@@ -168,17 +169,14 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 CONTACT_EMAIL = "zyrker1@gmail.com"
 
 DJOSER = {
-    'SEND_ACTIVATION_EMAIL': False,
-    "HIDE_USERS": False,
-    'LOGIN_FIELD': 'email',
-    'PERMISSIONS':{
-        'user_list': ['rest_framework.permissions.AllowAny'],
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
         'user': ['rest_framework.permissions.AllowAny'],
-        },
-    "SERIALIZERS": {
-        "user_list": 'user.serializers.UserSerializer',
-        "user": 'user.serializers.UserSerializer',
+    },
+    'SERIALIZERS': {
+        'user': 'user.serializers.UserSerializer',
         'current_user': 'user.serializers.UserSerializer',
-        'user_create': 'user.serializers.UserSerializer',
-        },
+        'user_create': 'user.serializers.UserCreateSerializer',
+    },
+    'HIDE_USERS': False,
 }
