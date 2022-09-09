@@ -11,11 +11,12 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from .models import (Favorite, Ingredient, IngredientAmount, Recipes,
                      ShoppingCart, Tags)
 from .filters import IngredientSearchFilter, RecipeFilter
-from user.views import CustomPageNumberPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeGetSerializer, RecipePostSerializer,
                           ShoppingCartSerializer, TagSerializer)
+
+from user.views import CustomPageNumberPagination
 
 
 class TagsViewSet(ReadOnlyModelViewSet):
