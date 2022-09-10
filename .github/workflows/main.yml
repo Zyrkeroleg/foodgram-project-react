@@ -37,8 +37,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Push to Docker Hub
-        uses: backend/foodgram/Dockerfile
+        uses: docker/build-push-action@v2 
         with:
+          file: backend/foodgram/Dockerfile
           push: true
           tags: zyrker/backend_foodgram:v1
 
