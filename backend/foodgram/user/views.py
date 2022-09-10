@@ -20,6 +20,14 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def perform_create(self, serializer):
+        email = self.request.data.get("email")
+        if User.objects.filter(email=email):
+            return Response(
+                "Email уже зарегестрирован", status=status.HTTP_400_BAD_REQUEST
+            )
+        return serializer.save()
+
 
 class FollowViewSet(APIView):
     serializer_class = FollowSerializer

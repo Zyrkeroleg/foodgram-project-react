@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+
 from user.views import CustomPageNumberPagination
 
 from .filters import IngredientSearchFilter, RecipeFilter
@@ -43,6 +44,62 @@ class RecipeViewSet(ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return RecipeGetSerializer
         return RecipePostSerializer
+
+    def create_ingredients(self, ingredients, recipe):
+        for ingredient in ingredients:
+            ingredient_id = ingredient['id']
+            amount = ingredient['amount']
+            IngredientAmount.objects.bulk_create([IngredientAmount(
+                recipe=recipe, ingredient=ingredient_id, amount=amount)]
+            )
+
+    def create(self, request, *args, **kwargs):
+        serializer = RecipePostSerializer(
+            data=request.data,
+            context={'request': request})
+        try:
+            serializer.is_valid()
+            ingredients = serializer.validated_data.pop("ingredients")
+            tags = serializer.validated_data.pop("tags")
+            recipe = Recipes.objects.create(
+                author=request.user, **serializer.validated_data)
+            recipe.tags.set(tags)
+            self.create_ingredients(recipe, ingredients)
+            serializer = RecipeGetSerializer(
+                instance=recipe, context={"request": request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        serializer = RecipePostSerializer(
+            data=request.data, context={"request": request})
+        try:
+            serializer.is_valid()
+            ingredients = serializer.validated_data.pop("ingredients")
+            tags = serializer.validated_data.pop("tags")
+            recipe = get_object_or_404(Recipes, id=kwargs["pk"])
+            IngredientAmount.objects.filter(recipe=recipe).delete()
+            recipe.tags.set(tags)
+            self.create_ingredients(recipe, ingredients)
+            Recipes.objects.filter(id=recipe.id).update(
+                **serializer.validated_data)
+            recipe = Recipes.objects.get(id=recipe.id)
+            if serializer.validated_data.get("image"):
+                recipe.image = serializer.validated_data["image"]
+            recipe.save()
+            serializer = RecipeGetSerializer(
+                instance=recipe, context={"request": request})
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_serializer_context(self):
+        context = super(RecipeViewSet, self).get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
     @staticmethod
     def post_method_for_actions(request, pk, serializers):

@@ -80,6 +80,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": os.getenv(
@@ -169,7 +176,7 @@ DJOSER = {
     'SERIALIZERS': {
         'user': 'user.serializers.UserSerializer',
         'current_user': 'user.serializers.UserSerializer',
-        'user_create': 'user.serializers.UserCreateSerializer',
+        #'user_create': 'user.serializers.UserCreateSerializer',
     },
     'HIDE_USERS': False,
 }
