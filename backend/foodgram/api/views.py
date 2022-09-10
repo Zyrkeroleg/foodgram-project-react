@@ -23,6 +23,7 @@ class TagsViewSet(ReadOnlyModelViewSet):
     queryset = Tags.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = TagSerializer
+    pagination_class = CustomPageNumberPagination
 
 
 class IngredientsViewSet(ReadOnlyModelViewSet):
@@ -41,11 +42,11 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
-        if self.action in ('list', 'retrieve'):
-            return RecipeGetSerializer
-        return RecipePostSerializer
+        if self.request.method in ('POST', 'PUT', 'PATCH'):
+            return RecipePostSerializer
+        return RecipeGetSerializer
 
-    def create_ingredients(self, ingredients, recipe):
+    def create_ingredients(self, recipe, ingredients):
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
             amount = ingredient['amount']
