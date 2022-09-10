@@ -2,6 +2,7 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views import CustomUserViewSet, FollowListView, FollowViewSet
+
 router = routers.DefaultRouter()
 router.register(r'users', CustomUserViewSet)
 

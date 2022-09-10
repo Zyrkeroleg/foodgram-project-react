@@ -1,8 +1,7 @@
 import csv
 
+from api.models import Ingredient, Tags
 from django.core.management.base import BaseCommand
-
-from api.models import Ingredient
 
 
 class Command(BaseCommand):
@@ -16,4 +15,13 @@ class Command(BaseCommand):
                 Ingredient.objects.get_or_create(
                     name=name,
                     measurement_unit=unit)
-            self.stdout.write('Successful')
+            self.stdout.write('Ingredients added successfully')
+        with open('./tags.csv', newline='') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                name, color, slug = row
+                Tags.objects.get_or_create(
+                    name=name,
+                    color=color,
+                    slug=slug)
+            self.stdout.write('Tags added succsessfylly')

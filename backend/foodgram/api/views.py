@@ -1,22 +1,21 @@
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Sum
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from user.views import CustomPageNumberPagination
 
+from .filters import IngredientSearchFilter, RecipeFilter
 from .models import (Favorite, Ingredient, IngredientAmount, Recipes,
                      ShoppingCart, Tags)
-from .filters import IngredientSearchFilter, RecipeFilter
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeGetSerializer, RecipePostSerializer,
                           ShoppingCartSerializer, TagSerializer)
-
-from user.views import CustomPageNumberPagination
 
 
 class TagsViewSet(ReadOnlyModelViewSet):
@@ -73,7 +72,7 @@ class RecipeViewSet(ModelViewSet):
             request=request, pk=pk, model=Favorite)
 
     @action(detail=True, methods=["POST"],
-            url_path='Shoping_cart', permission_classes=[IsAuthenticated])
+            url_path='shopping_cart', permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk):
         return self.post_method_for_actions(
             request=request, pk=pk, serializers=ShoppingCartSerializer)

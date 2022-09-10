@@ -83,7 +83,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Tag'
+                  $ref: '#/components/schemas/Tags'
           description: ''
       tags:
         - Теги
@@ -103,7 +103,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tag'
+                $ref: '#/components/schemas/Tags'
           description: ''
         '404':
           $ref: '#/components/responses/NotFound'
@@ -770,7 +770,7 @@ components:
           type: integer
           description: 'Общее количество рецептов пользователя'
 
-    Tag:
+    Tags:
       type: object
       properties:
         id:
@@ -805,7 +805,7 @@ components:
           description: 'Список тегов'
           type: array
           items:
-            $ref: '#/components/schemas/Tag'
+            $ref: '#/components/schemas/Tags'
         author:
           $ref: '#/components/schemas/User'
         ingredients:
