@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
     def handle(self, *args, **options):
         with open(
-            './ingredients.csv',
+            'backend/foodgram/ingredients.csv',
                 newline='') as file:
             reader = csv.reader(file)
             for row in reader:
@@ -16,7 +16,7 @@ class Command(BaseCommand):
                     name=name,
                     measurement_unit=unit)
             self.stdout.write('Ingredients added successfully')
-        with open('./tags.csv', newline='') as file:
+        with open('backend/foodgram/tags.csv', newline='') as file:
             reader = csv.reader(file)
             for row in reader:
                 name, color, slug = row
