@@ -10,7 +10,7 @@ services:
     volumes:
       - /var/lib/postgres/data/
     env_file:
-      - ../backend/foodgram/foodgram/.env
+      - ./.env
   backend:
     image: zyrker/backend_foodgram:v1
     restart: always
@@ -25,7 +25,7 @@ services:
     depends_on:
       - db
     env_file:
-      - ../backend/foodgram/foodgram/.env
+      - ./.env
 
   nginx:
     image: nginx:1.19.3
