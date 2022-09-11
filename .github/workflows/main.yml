@@ -55,7 +55,8 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }} 
         script: |
-          sudo docker pull zyrker/api_yamdb:v1
+          sudo docker pull zyrker/backend_foodgram:v1
+          sudo docker pull zyrker/frontend_foodgram:v1
           sudo docker-compose stop
           sudo docker-compose rm web
           touch .env
