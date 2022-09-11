@@ -16,9 +16,9 @@ services:
     restart: always
     command: >
       sh -c "
-            python backend/foodgram/manage.py collectstatic --noinput &&
-            python backend/foodgram/manage.py migrate &&
-            python backend/foodgram/manage.py add_data_from_csv &&
+            python manage.py collectstatic --noinput &&
+            python manage.py migrate &&
+            python manage.py add_data_from_csv &&
             gunicorn foodgram.wsgi:application --bind 0:8000"
     volumes:
       - static_value:/app/static/
